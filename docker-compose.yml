@@ -1,0 +1,37 @@
+version: "2"
+
+services:
+  introducer:
+    build: .
+    command: introducer
+    hostname: introducer
+    volumes:
+      - ./introducer:/introducer
+      - ./node:/node
+    ports:
+      - "3456"
+
+  node:
+    build: .
+    command: node
+    ports:
+      - 3456
+      - 8097
+    volumes:
+      - ./node:/node
+    links:
+      - introducer
+
+  gateway:
+    build: .
+    hostname: gateway
+    command: gateway
+    volumes:
+      - ./node:/node
+    ports:
+      - "3456:3456"
+      - 8021
+      - 8022
+    links:
+      - introducer
+      - node
